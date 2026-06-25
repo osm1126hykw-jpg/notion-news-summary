@@ -4,9 +4,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  hello:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Hello
-        run: echo "News Summary Workflow Started"
+      - name: Show Secrets Exist
+        run: |
+          echo "Workflow started"
+
+          if [ -n "${{ secrets.NOTION_TOKEN }}" ]; then
+            echo "NOTION_TOKEN OK"
+          else
+            echo "NOTION_TOKEN NG"
+          fi
+
+          if [ -n "${{ secrets.NOTION_DATABASE_ID }}" ]; then
+            echo "DATABASE_ID OK"
+          else
+            echo "DATABASE_ID NG"
+          fi
