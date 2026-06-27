@@ -1,25 +1,32 @@
-name: Manual Run
+name: Notion News Summary
 
 on:
+  # 手動でいつでも動かせるようにする設定
   workflow_dispatch:
+  # 毎日決まった時間に自動で動かしたい場合は、下の「#」を消して設定してください
+  # schedule:
+  #   - cron: '0 23 * * *' # 日本時間の朝8時
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Show Secrets Exist
-        run: |
-          echo "Workflow started"
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-          if [ -n "${{ secrets.NOTION_TOKEN }}" ]; then
-            echo "NOTION_TOKEN OK"
-          else
-            echo "NOTION_TOKEN NG"
-          fi
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-          if [ -n "${{ secrets.NOTION_DATABASE_ID }}" ]; then
-            echo "DATABASE_ID OK"
-          else
-            echo "DATABASE_ID NG"
-          fi
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4 google-genai
+
+    - name: Run script
+      env:
+        NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: python main.py
